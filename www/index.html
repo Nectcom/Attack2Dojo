@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html ng-app="myApp">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+    <script src="components/loader.js"></script>
+    <link rel="stylesheet" href="components/loader.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        var app = angular.module('myApp', ['onsen']);
+        
+        // what u want? -> toppage.htmlのinputに入力された値をpwdとしてurlに投げ、取得したページをpage1.htmlに出す
+        app.value('pwds', {
+          'toppage' : 7462,
+          'username': '',
+          'userpwd': '',
+          });
+          
+        app.value('urls', {
+          'index' : 'https://library.rail-e.or.jp/e-library/Index',
+          'login' : ''
+        });
+        
+        app.factory('HTTPRequestService', ['$http', function($http){
+          var httpRequestService = {};
+          
+          httpRequestService.getHtml = function(address, datas, callback){
+            console.debug('request' + url);
+            $http({
+              method : 'POST',
+              headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+              },
+              transformRequest : $httpParamSerializerJQLike,
+              url : address,
+              data : datas
+            }).success(function(data, status, header, config){
+              console.debug('request is successed.');
+              callback(data);
+            });
+          };
+          
+          return httpRequestService;
+        }]);
+        
+        app.controller('PageController', ['$scope', '$http', '$httpParamSerializerJQLike', 'pwds', 'urls', 
+          function($scope, $http, $httpParamSerializerJQLike, pwds, urls){
+            $scope.pwds = pwds;
+            $scope.urls = urls;
+            $scope.data = '';
+            
+            $scope.firstLogin = function(){
+              console.debug('try 1st login post.');
+              
+              // Url Post. and callback to page1.html.
+              $http({
+                method : 'POST',
+                headers : {
+                  'Content-Type' : 'application/x-www-form-urlencoded'
+                },
+                transformRequest : $httpParamSerializerJQLike,
+                url : $scope.urls.index,
+                data : { pwd : $scope.pwds.toppage}
+              })
+              .success(function(data, status, header, config){
+                console.debug('request is successed.');
+                console.debug(data);
+              })
+              .error(function(data, status, header, config){
+                console.debug('request is failed.');
+              });
+              
+              $scope.app.slidingMenu.setMainPage('page1.html');
+            }
+          }]);
+    </script>
+</head>
+<body>
+    <ons-sliding-menu var="app.slidingMenu" menu-page="menu.html" main-page="toppage.html" side="left" type="overlay" max-slide-distance="200px">
+    </ons-sliding-menu>
+</body>
+</html>
