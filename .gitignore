@@ -1,0 +1,7 @@
+# created by Nect at 2017/02/13
+
+# 基本はwww直下と.monaca内のみ
+/*
+
+!/www/
+!/.monaca/
