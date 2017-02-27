@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
     <script src="components/loader.js"></script>
+    <script type="text/javascript" src="javascripts/jquery.xdomainajax.js"></script>
     <link rel="stylesheet" href="components/loader.css">
     <link rel="stylesheet" href="css/style.css">
     <script>
@@ -22,58 +23,46 @@
           'login' : ''
         });
         
-        app.factory('HTTPRequestService', ['$http', '$httpParamSerializerJQLike', 
-        function($http, $httpParamSerializerJQLike){
-          var httpRequestService = {};
+        //app.factory('HTTPRequestService', ['$http', '$httpParamSerializerJQLike', 
+        //function($http, $httpParamSerializerJQLike){
+        //  var httpRequestService = {};
           
-          httpRequestService.getHtml = function(address, datas, callback){
-            console.debug('request ' + address);
-            $http({
-              method : 'POST',
-              headers : {
-                'Content-Type' : 'application/x-www-form-urlencoded'
-              },
-              transformRequest : $httpParamSerializerJQLike,
-              url : address,
-              data : datas
-            }).success(function(data, status, header, config){
-              callback(data);
-            });
-          };
+        //  httpRequestService.getHtml = function(address, datas, callback){
+        //    console.debug('request ' + address);
+        //    $http({
+        //      method : 'POST',
+        //      headers : {
+        //        'Content-Type' : 'application/x-www-form-urlencoded'
+        //      },
+        //      transformRequest : $httpParamSerializerJQLike,
+        //      url : address,
+        //      data : datas
+        //    }).success(function(data, status, header, config){
+        //      callback(data);
+        //    });
+        //  };
           
-          return httpRequestService;
-        }]);
+        //  return httpRequestService;
+        //}]);
         
-        app.controller('PageController', ['$scope', 'HTTPRequestService', 'pwds', 'urls', 
-          function($scope, HTTPRequestService, pwds, urls){
+        app.controller('PageController', ['$scope', 'pwds', 'urls', 
+          function($scope, pwds, urls){
             $scope.pwds = pwds;
             $scope.urls = urls;
             $scope.data = 'no name';
             
             $scope.firstLogin = function(){
-              console.debug('try 1st login post.');
-              
-              // Url Post. and callback to page1.html.
-              //HTTPRequestService.getHtml($scope.urls.index, {pwd : $scope.pwds.toppage}, function(data){
-              //  console.debug('callback.');
-              //  console.debug(data);
-              //  $scope.data = $('body').text();
-                
-              //  console.debug($scope.data);
-              //});
-
               $(function () {
-                  console.debug('do ajax');
                   $.ajax({
-                      url: urls.index,
-                      type: 'POST',
+                      url: "https://library.rail-e.or.jp/",
+                      type: 'GET',
                       dataType: 'html'
+                  }).fail(function(){
+                    
                   })
                   .done(function (data) {
-                      console.debug(data);
-                      //console.debug($(data).find("body").get(0));
-                      console.log($(data).attr('src'));
-                      $scope.data = $('<title>').append(data);
+                      console.debug(JSON.stringify(data));
+                      console.debug(JSON.stringify($(data.results[0]).find("*[name='top']")));
                   });
               });
               
