@@ -61,8 +61,9 @@
                     
                   })
                   .done(function (data) {
-                      console.debug(JSON.stringify(data));
-                      console.debug(JSON.stringify($(data.results[0]).find("*[name='top']")));
+                    var split = data.results[0].split("</head>");
+                    var hoge = "<div id='hoge'>" + split[1] + "</div>";
+                    console.log($(data.results[0]).frames);
                   });
               });
               
