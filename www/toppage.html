@@ -5,16 +5,19 @@
         </ons-toolbar>
 
         <div style="text-align: center; margin-top=30px;">
-            <h1>道場Login Page</h1>
-            <p> 今月の実力試験道場のパスワードを教えてください</p>
+            <h1>Login Page</h1>
             
-            <p>
-              <input class="text-input" type="number" modifier='underbar' ng-model='pwds.toppage' placeholder="Password"> </input>
-            </p>
-            <ons-button
-                ng-click="firstLogin()">
-                Start
-            </ons-button>
+            <div class="login-form">
+              <input class="text-input--underbar" type="number" ng-model='pwd' placeholder="Book Password"> </input>
+              <br> <br>
+              <input class="text-input--underbar" type="text" ng-model='username' placeholder="Username"> </input>
+              <input class="text-input--underbar" type="password" ng-model='userpwd' placeholder="User Password"> </input>
+              <br><br>
+              <ons-button class="login-button" should-spin={{isSpin}}
+                  ng-click="firstLogin()">
+                Log in
+              </ons-button>
+            </div>
         </div>
     </ons-page>
 </ons-navigator>

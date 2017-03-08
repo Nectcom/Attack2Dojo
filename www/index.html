@@ -13,61 +13,77 @@
         
         // what u want? -> toppage.htmlのinputに入力された値をpwdとしてurlに投げ、取得したページをpage1.htmlに出す
         app.value('pwds', {
-          'toppage' : 7462,
-          'username': '',
-          'userpwd': '',
+          'login_pass' : {'pwd' : 2384},
+          'username': 'crapcrap',
+          'userpwd': 'thisistestid',
           });
           
         app.value('urls', {
-          'index' : 'https://library.rail-e.or.jp/e-library/Index',
-          'login' : ''
+          'index' : ['POST', 'https://library.rail-e.or.jp/e-library/Index'],
+          'login' : ['GET', 'https://library.rail-e.or.jp/e-library/jsp/dojo/index.jsp']
         });
         
-        //app.factory('HTTPRequestService', ['$http', '$httpParamSerializerJQLike', 
-        //function($http, $httpParamSerializerJQLike){
-        //  var httpRequestService = {};
+        app.factory('HTTPRequestService', ['$http', 'urls', '$httpParamSerializerJQLike', 
+        function($http, urls, $httpParamSerializerJQLike){
+          var httpRequestService = {};
           
-        //  httpRequestService.getHtml = function(address, datas, callback){
-        //    console.debug('request ' + address);
-        //    $http({
-        //      method : 'POST',
-        //      headers : {
-        //        'Content-Type' : 'application/x-www-form-urlencoded'
-        //      },
-        //      transformRequest : $httpParamSerializerJQLike,
-        //      url : address,
-        //      data : datas
-        //    }).success(function(data, status, header, config){
-        //      callback(data);
-        //    });
-        //  };
+          // @param add_key urls value key. add to urls ['REST', 'urls']
+          httpRequestService.getHtml = function(add_key, datas, callback){
+            // console.debug('request ' + urls[add_key][1]);
+            $http({
+              method : urls[add_key][0],
+              headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+              },
+              transformRequest : $httpParamSerializerJQLike,
+              url : urls[add_key][1],
+              data : datas
+            }).then(function onSuccess(response){
+              // console.log('success');
+              callback(response.data);
+            }, function onError(response){
+              console.log('error : ' + urls[add_key][1]);
+            });
+          };
           
-        //  return httpRequestService;
-        //}]);
+          return httpRequestService;
+        }]);
         
-        app.controller('PageController', ['$scope', 'pwds', 'urls', 
-          function($scope, pwds, urls){
-            $scope.pwds = pwds;
+        app.controller('PageController', ['$scope', 'pwds', 'urls', 'HTTPRequestService', 
+          function($scope, pwds, urls, httpRequestService){
+            $scope.pwd = pwds['login_pass']['pwd'];
+            $scope.username = pwds['username'];
+            $scope.userpwd = pwds['userpwd'];
             $scope.urls = urls;
             $scope.data = 'no name';
             
             $scope.firstLogin = function(){
-              $(function () {
-                  $.ajax({
-                      url: "https://library.rail-e.or.jp/",
-                      type: 'GET',
-                      dataType: 'html'
-                  }).fail(function(){
-                    
-                  })
-                  .done(function (data) {
-                    var split = data.results[0].split("</head>");
-                    var hoge = "<div id='hoge'>" + split[1] + "</div>";
-                    console.log($(data.results[0]).frames);
-                  });
-              });
+              console.debug('go login.');
+              $scope.isSpin = true;
               
-              $scope.app.slidingMenu.setMainPage('page1.html');
+              // Fail pattern.
+              // httpRequestService.getHtml('index', {}, function(data){
+              httpRequestService.getHtml('index', pwds['login_pass'], function(data){
+                
+                // Error Handring.
+                if(data.match(/TopError/)){
+                  console.log("Password missed");
+                  alert('実力試験道場のパスワードが間違っています');
+                  $scope.isSpin = false;
+                  return;
+                }
+                
+                httpRequestService.getHtml('login', {}, function(data){
+                  // console.debug($(data).find('.footer').text());
+                  var loginQuery = $(data);
+                  
+                  loginQuery.find('.login_input01 > #textPersonId').val($scope.username);
+                  loginQuery.find('#passwordPassword').val($scope.userpwd);
+                  
+                  console.log(loginQuery.find('.login_input01 > #textPersonId').val());
+                  $scope.app.slidingMenu.setMainPage('page1.html');
+                });
+              });
             }
           }]);
     </script>
