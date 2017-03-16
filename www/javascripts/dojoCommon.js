@@ -138,3 +138,25 @@ function doubleClick() {
 		document.getElementById(elementId+"_hid").value=elementValueAftChg;
 	}
 	//HTTPS廃止(簡単な暗号化) ADTEC.Zhanglili 2007/10/10 ADD END
+  
+  
+	//**************************************************************************
+	//* method	    : getEncodeElementValue()
+	//* describe	: 暗号化メソッド(暗号になる値を返却する)
+	//* parameter	: elementValue 変換対象項目の値
+  //* return    : elementValueAftChg 変換後の値
+	//************************************************************************** 
+	function getEncodeElementValue(elementValue){
+		var elementValueBefChg = elementValue;
+		var elementValueAftChg = "";
+		for(i=0;i<elementValueBefChg.length;i++){
+			var eachValue = elementValueBefChg.charCodeAt(i);
+			var eachEncodeValue = eachValue-7;
+			if(i!=0){
+				elementValueAftChg=elementValueAftChg+","+eachEncodeValue;
+			}else{
+				elementValueAftChg=eachEncodeValue;
+			}
+		}
+    return elementValueAftChg;
+	}

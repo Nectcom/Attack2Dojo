@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
     <script src="components/loader.js"></script>
     <script type="text/javascript" src="javascripts/jquery.xdomainajax.js"></script>
+    <script type="text/javascript" src="javascripts/dojoCommon.js"></script>
     <link rel="stylesheet" href="components/loader.css">
     <link rel="stylesheet" href="css/style.css">
     <script>
@@ -80,10 +81,34 @@
                   loginQuery.find('.login_input01 > #textPersonId').val($scope.username);
                   loginQuery.find('#passwordPassword').val($scope.userpwd);
                   
-                  console.log(loginQuery.find('.login_input01 > #textPersonId').val());
+                  // Do Login submit.
+                  urls['userLogin'] = ['POST' , 'https://library.rail-e.or.jp/e-library/Login'];
+                  var personID = loginQuery.find('#textPersonId').val();
+                  var password = loginQuery.find('#passwordPassword').val();
+                  
+                  loginQuery.find('#textPersonId_hid').val(getEncodeElementValue(personID));
+                  loginQuery.find('#passwordPassword_hid').val(getEncodeElementValue(password));
+                  loginQuery.find('input[name=act]').val('input');
+                  
+                   var params = { 'act' : 'login',
+                                'textPersonId' : personID, 'passwordPassword' : password,
+                                'textPersonId_hid' : getEncodeElementValue(personID),
+                                'passwordPassword_hid' : getEncodeElementValue(password)
+                               };
+                
+                  httpRequestService.getHtml('userLogin', params, function(data){
+                   console.log(data);
+                  });
+                  
                   $scope.app.slidingMenu.setMainPage('page1.html');
                 });
               });
+              
+              // make main page test list.
+              // @params data return html data
+              function makeFieldList(data){
+                
+              }
             }
           }]);
     </script>
