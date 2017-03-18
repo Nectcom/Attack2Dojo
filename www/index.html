@@ -96,9 +96,7 @@
                                 'passwordPassword_hid' : getEncodeElementValue(password)
                                };
                 
-                  httpRequestService.getHtml('userLogin', params, function(data){
-                   console.log(data);
-                  });
+                  httpRequestService.getHtml('userLogin', params, makeFiledList(data));
                   
                   $scope.app.slidingMenu.setMainPage('page1.html');
                 });
