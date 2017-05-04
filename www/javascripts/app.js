@@ -19,6 +19,8 @@ app.value('urls', {
 app.factory('HTTPRequestService', ['$http', '$q', 'urls', '$httpParamSerializerJQLike', 
   function($http, $q, urls, $httpParamSerializerJQLike){
     var httpRequestService = {};
+    var deferred = $q.defer();
+    var promise = deferred.promise;
 
     /**
      * 指定されたページを取得する
@@ -50,8 +52,6 @@ app.factory('HTTPRequestService', ['$http', '$q', 'urls', '$httpParamSerializerJ
      * @param userpass
      * */
     this.userLogin = function(bookcode, username, userpass){
-      var deferred = $q.defer();
-      var promise = deferred.promise;
       
       promise
       .then(function(bookcode){
